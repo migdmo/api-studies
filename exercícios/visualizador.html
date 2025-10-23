@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Exemplo de Consumo de API</title>
+</head>
+<body>
+  <h1>Lista de Postagens</h1>
+  <button onclick="carregarUsuarios()">Consultar Postagens</button>
+  <ul id="listaPostagens"></ul>
+  <script>
+    async function carregarUsuarios() {
+      try {
+        const resposta = await fetch("https://jsonplaceholder.typicode.com/posts");
+        const usuarios = await resposta.json();
+        const lista = document.getElementById("listaPostagens");
+        lista.innerHTML = "";
+        for (let i = 0; i < usuarios.length; i++) {
+          const li = document.createElement("li");
+          const titulo = usuarios[i].title;
+          const body = `userId: ${usuarios[i].userId}<br>Conteúdo: ${usuarios[i].body}`;
+          li.innerHTML = `Título: ${titulo}<br>Body: ${body}`;
+          lista.appendChild(li);
+        }
+      } catch (erro) {
+        console.error("Erro ao carregar postagens:", erro);
+        alert("Não foi possível carregar os dados da API.");
+      }
+    }
+  </script>
+</body>
+</html>

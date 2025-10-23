@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Visualizador de Filmes</title>
+  <style>
+    body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; padding: 20px; }
+    #container { max-width: 900px; margin: 0 auto; }
+    .card { display: flex; gap: 20px; align-items: flex-start; border: 1px solid #e0e0e0; padding: 16px; border-radius: 8px; }
+    .poster { max-width: 300px; width: 100%; height: auto; border-radius: 4px; }
+    .meta { flex: 1; }
+    .title { font-size: 1.25rem; margin: 0 0 8px 0; }
+    .info { color: #555; margin: 6px 0; }
+    button { padding: 8px 12px; border-radius: 6px; border: 1px solid #aaa; background: #f7f7f7; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <h1>Filme</h1>
+    <p>Exemplo simples que busca um filme da OMDb e mostra o título e o banner.</p>
+    <button id="carregar">Carregar Filme</button>
+
+    <div id="output" style="margin-top:16px;"></div>
+  </div>
+
+  <script>
+    const url = 'https://www.omdbapi.com/?i=tt3896198&apikey=104edb60';
+
+    async function carregar() {
+      const out = document.getElementById('output');
+      out.innerHTML = 'Carregando...';
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+
+        // Monta o cartão do filme
+        out.innerHTML = '';
+        const card = document.createElement('div');
+        card.className = 'card';
+
+        const img = document.createElement('img');
+        img.className = 'poster';
+        img.src = data.Poster !== 'N/A' ? data.Poster : '';
+        img.alt = data.Title || 'Poster';
+
+        const meta = document.createElement('div');
+        meta.className = 'meta';
+        meta.innerHTML = `
+          <h2 class="title">${data.Title || '—'}</h2>
+          <div class="info">Ano: ${data.Year || '—'}</div>
+          <div class="info">Gênero: ${data.Genre || '—'}</div>
+          <p>${data.Plot || ''}</p>
+        `;
+
+        card.appendChild(img);
+        card.appendChild(meta);
+        out.appendChild(card);
+
+      } catch (err) {
+        out.innerHTML = '';
+        const e = document.createElement('div');
+        e.style.color = 'red';
+        e.textContent = 'Erro ao carregar o filme: ' + err.message;
+        out.appendChild(e);
+      }
+    }
+
+    document.getElementById('carregar').addEventListener('click', carregar);
+    // carregar();
+  </script>
+</body>
+</html>
